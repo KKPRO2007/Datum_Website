@@ -17,6 +17,8 @@ const Header: React.FC<HeaderProps> = ({ theme, onToggleTheme }) => {
     { name: 'About', path: '/about' },
     { name: 'Team', path: '/team' },
     { name: 'Events', path: '/events' },
+    { name: 'Gallery', path: '/gallery' },
+   { name: 'Admin', path: '/admin' },
   ];
 
   const isActive = (path: string) => location.pathname === path;
