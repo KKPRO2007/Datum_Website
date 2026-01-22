@@ -91,7 +91,7 @@ DATUM is a student-run Data Science community website that connects aspiring dat
 
 ### Team Member 4 — Gallery + Admin Dashboard
 
-**Assigned to:** Krishna Koushik
+**Assigned to:** Krishna
 
 **Works on:**
 
@@ -297,4 +297,4 @@ For questions or clarifications, contact the respective team member or project l
 
 ---
 
-*Last Updated: January 21, 2026*
+*Last Updated: January 22, 2026*
