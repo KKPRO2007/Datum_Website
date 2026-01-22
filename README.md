@@ -1,7 +1,5 @@
 # DATUM – Student Data Science Community Website
 
-![DATUM Banner](public/logo_datum.png)
-
 ## 🚀 About DATUM
 
 DATUM is a student-run Data Science community website that connects aspiring data scientists, showcases events, and provides resources for learning and collaboration.
