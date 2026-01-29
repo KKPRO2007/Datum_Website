@@ -56,7 +56,7 @@ const Hero: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative min-h-[95vh] flex items-center justify-center overflow-hidden bg-white dark:bg-slate-950 px-4 transition-colors duration-500">
+    <div className="relative min-h-[90vh] flex items-start justify-center overflow-x-hidden overflow-y-visible bg-white dark:bg-slate-950 px-4 transition-colors duration-500">
       {/* Background FX */}
       <AnimatedGradient />
       
@@ -69,10 +69,10 @@ const Hero: React.FC = () => {
       {/* Grid Pattern Overlay */}
       <div className="absolute inset-0 bg-grid opacity-[0.05] dark:opacity-10 text-slate-900 dark:text-white pointer-events-none"></div>
 
-      <div className={`relative z-10 max-w-7xl mx-auto text-center transition-all duration-1000 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+      <div className={`relative z-10 max-w-7xl mx-auto text-center pt-16 md:pt-20 transition-all duration-1000 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
         
         {/* logo Section */}
-        <div className="flex justify-center mb-10">
+        <div className="flex justify-center mb-6">
           <div className="relative group perspective-1000">
             {/* Pulsing Back-Glow */}
             <div className="absolute inset-0 bg-indigo-500/20 dark:bg-indigo-400/30 blur-[80px] rounded-full scale-125 group-hover:scale-150 transition-transform duration-1000"></div>
@@ -81,17 +81,17 @@ const Hero: React.FC = () => {
               <img 
                 src="logo_datum.png" 
                 alt="Datum Logo" 
-                className="w-36 h-36 md:w-56 md:h-56 object-contain rounded-[2.5rem]"
+                className="w-32 h-32 md:w-48 md:h-48 object-contain rounded-[2.5rem]"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = 'https://raw.githubusercontent.com/stackblitz/stackblitz-images/main/datum-logo.png';
                 }}
               />
               
               {/* Floating Orbitals */}
-              <div className="absolute -top-6 -right-6 p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl group-hover:translate-y-[-10px] transition-transform duration-500">
+              <div className="absolute -top-3 -right-3 p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl group-hover:translate-y-[-10px] transition-transform duration-500">
                 <BrainCircuit className="w-10 h-10 text-teal-500" />
               </div>
-              <div className="absolute -bottom-2 -left-6 p-3 bg-indigo-600 rounded-xl shadow-lg group-hover:translate-x-[-10px] transition-transform duration-500">
+              <div className="absolute -bottom-1 -left-4 p-3 bg-indigo-600 rounded-xl shadow-lg group-hover:translate-x-[-10px] transition-transform duration-500">
                 <Sparkles className="w-6 h-6 text-white" />
               </div>
             </div>
@@ -105,12 +105,16 @@ const Hero: React.FC = () => {
         </div>
         
         {/* Main Heading */}
-        <h1 className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter mb-10 leading-[0.85] text-slate-900 dark:text-white">
+        <h1 className="font-black tracking-tighter mb-10 text-slate-900 dark:text-white
+          text-[2.75rem] sm:text-[3.5rem] md:text-[4.5rem] lg:text-[5.5rem] leading-[1.05]">
           Empowering the <br />
-          <span className="text-indigo-600 dark:text-indigo-500 drop-shadow-[0_0_40px_rgba(79,70,229,0.3)]">
+          <span className="block mt-2 text-indigo-600 dark:text-indigo-500
+            text-[3.25rem] sm:text-[4rem] md:text-[5.25rem] lg:text-[6.5rem]
+            drop-shadow-[0_0_40px_rgba(79,70,229,0.3)]">
             Data Hub
           </span>
         </h1>
+
         
         {/* Description Text */}
         <div className="max-w-4xl mx-auto space-y-12 mb-16">
