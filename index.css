@@ -1,0 +1,79 @@
+/* ================= FLIP CARD ================= */
+
+.perspective {
+  perspective: 1200px;
+}
+
+.flip-inner {
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(.4, 0, .2, 1);
+}
+
+/* Desktop Hover Flip */
+@media (hover: hover) {
+  .flip-card:hover .flip-inner {
+    transform: rotateY(180deg);
+  }
+}
+
+/* Mobile Tap Flip */
+.flip-card.active .flip-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-front,
+.flip-back {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.flip-back {
+  transform: rotateY(180deg);
+}
+
+/* ================= PREMIUM GRADIENT BORDER ================= */
+
+.gradient-border {
+  position: relative;
+}
+
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 1.5rem;
+  background: linear-gradient(45deg, #6366f1, #3b82f6, #22c55e);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.gradient-border:hover::before {
+  opacity: 1;
+}
+
+.gradient-border > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ================= 3D TILT EFFECT ================= */
+
+.tilt {
+  transition: transform 0.4s ease;
+}
+
+/* Desktop Tilt */
+@media (hover: hover) {
+  .tilt:hover {
+    transform: rotateX(6deg) rotateY(-6deg) scale(1.03);
+  }
+}
+
+/* Disable Tilt On Mobile */
+@media (hover: none) {
+  .tilt:hover {
+    transform: none;
+  }
+}

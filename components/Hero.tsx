@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   ArrowRight, 
@@ -8,45 +8,83 @@ import {
   GraduationCap, 
   BrainCircuit, 
   Database,
-  Cpu,
-  Layers,
-  Network,
-  Box
+  Terminal,
+  MousePointer2
 } from 'lucide-react';
 
-const FloatingIcon = ({ icon: Icon, delay, size, className }: { icon: any, delay: number, size: number, className: string }) => (
-  <div 
-    className={`absolute pointer-events-none transition-all duration-1000 ${className}`}
-    style={{ 
-      animation: `float 8s ease-in-out infinite`,
-      animationDelay: `${delay}s`,
-    }}
-  >
-    <Icon size={size} strokeWidth={1} className="opacity-10 dark:opacity-20 text-indigo-500" />
-  </div>
-);
+const ParticleNetwork = () => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-const AnimatedGradient = () => (
-  <div className="absolute inset-0 overflow-hidden pointer-events-none">
-    <div className="absolute -inset-[100%] opacity-40 dark:opacity-30">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,#4f46e5_0%,transparent_50%)] animate-[mesh_20s_linear_infinite]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,#0ea5e9_0%,transparent_50%)] animate-[mesh_25s_linear_infinite_reverse]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,#14b8a6_0%,transparent_50%)] animate-[mesh_30s_linear_infinite]" />
-    </div>
-    <style>{`
-      @keyframes mesh {
-        0% { transform: translate(0, 0) rotate(0deg); }
-        33% { transform: translate(3%, 3%) rotate(120deg); }
-        66% { transform: translate(-3%, 2%) rotate(240deg); }
-        100% { transform: translate(0, 0) rotate(360deg); }
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let particles: { x: number; y: number; vx: number; vy: number; radius: number }[] = [];
+    const particleCount = 80;
+    const connectionDistance = 150;
+
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+
+    const createParticles = () => {
+      particles = [];
+      for (let i = 0; i < particleCount; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          vx: (Math.random() - 0.5) * 0.5,
+          vy: (Math.random() - 0.5) * 0.5,
+          radius: Math.random() * 2 + 1,
+        });
       }
-      @keyframes float {
-        0%, 100% { transform: translateY(0px) rotate(0deg); }
-        50% { transform: translateY(-30px) rotate(5deg); }
-      }
-    `}</style>
-  </div>
-);
+    };
+
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = 'rgba(79, 70, 229, 0.4)';
+      ctx.strokeStyle = 'rgba(79, 70, 229, 0.15)';
+
+      particles.forEach((p, i) => {
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        for (let j = i + 1; j < particles.length; j++) {
+          const p2 = particles[j];
+          const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+          if (dist < connectionDistance) {
+            ctx.lineWidth = 1 - dist / connectionDistance;
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+          }
+        }
+      });
+
+      requestAnimationFrame(draw);
+    };
+
+    window.addEventListener('resize', resize);
+    resize();
+    createParticles();
+    draw();
+
+    return () => window.removeEventListener('resize', resize);
+  }, []);
+
+  return <canvas ref={canvasRef} className="absolute inset-0 z-0 opacity-40 dark:opacity-60 pointer-events-none" />;
+};
 
 const Hero: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -56,114 +94,72 @@ const Hero: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative min-h-[90vh] flex items-start justify-center overflow-x-hidden overflow-y-visible bg-white dark:bg-slate-950 px-4 transition-colors duration-500">
-      {/* Background FX */}
-      <AnimatedGradient />
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-white dark:bg-slate-950 px-4 transition-colors duration-500 pt-20">
+      {/* Network Effect */}
+      <ParticleNetwork />
       
-      {/* Decorative Floating Symbols */}
-      <FloatingIcon icon={Cpu} delay={0} size={64} className="top-20 left-[10%]" />
-      <FloatingIcon icon={Network} delay={2} size={80} className="bottom-40 left-[15%]" />
-      <FloatingIcon icon={Layers} delay={4} size={70} className="top-40 right-[12%]" />
-      <FloatingIcon icon={Box} delay={1} size={50} className="bottom-20 right-[20%]" />
+      {/* Blue Glow Background */}
+      <div className="absolute top-1/4 -left-1/4 w-1/2 h-1/2 bg-blue-500/10 dark:bg-blue-600/20 blur-[150px] rounded-full animate-pulse"></div>
+      <div className="absolute bottom-1/4 -right-1/4 w-1/2 h-1/2 bg-indigo-500/10 dark:bg-indigo-600/20 blur-[150px] rounded-full animate-pulse delay-700"></div>
 
-      {/* Grid Pattern Overlay */}
+      {/* Grid Pattern */}
       <div className="absolute inset-0 bg-grid opacity-[0.05] dark:opacity-10 text-slate-900 dark:text-white pointer-events-none"></div>
 
-      <div className={`relative z-10 max-w-7xl mx-auto text-center pt-16 md:pt-20 transition-all duration-1000 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+      <div className={`relative z-10 max-w-7xl mx-auto text-center transition-all duration-1000 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
         
-        {/* logo Section */}
+        {/* Floating AI Indicators */}
         <div className="flex justify-center mb-6">
-          <div className="relative group perspective-1000">
-            {/* Pulsing Back-Glow */}
-            <div className="absolute inset-0 bg-indigo-500/20 dark:bg-indigo-400/30 blur-[80px] rounded-full scale-125 group-hover:scale-150 transition-transform duration-1000"></div>
-            
-            <div className="relative p-3 bg-white rounded-[3rem] shadow-[0_30px_60px_rgba(0,0,0,0.12)] dark:shadow-[0_30px_60px_rgba(79,70,229,0.25)] transition-all duration-700 group-hover:scale-110 group-hover:rotate-[-4deg] ring-1 ring-slate-100">
-              <img 
-                src="logo_datum.png" 
-                alt="Datum Logo" 
-                className="w-32 h-32 md:w-48 md:h-48 object-contain rounded-[2.5rem]"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = 'https://raw.githubusercontent.com/stackblitz/stackblitz-images/main/datum-logo.png';
-                }}
-              />
-              
-              {/* Floating Orbitals */}
-              <div className="absolute -top-3 -right-3 p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl group-hover:translate-y-[-10px] transition-transform duration-500">
-                <BrainCircuit className="w-10 h-10 text-teal-500" />
-              </div>
-              <div className="absolute -bottom-1 -left-4 p-3 bg-indigo-600 rounded-xl shadow-lg group-hover:translate-x-[-10px] transition-transform duration-500">
-                <Sparkles className="w-6 h-6 text-white" />
-              </div>
-            </div>
+           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50/80 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 text-blue-600 dark:text-blue-400 text-[10px] font-black tracking-[0.2em] uppercase backdrop-blur-md animate-bounce">
+            <BrainCircuit className="w-3.5 h-3.5" />
+            <span>Neural Network Active</span>
           </div>
         </div>
 
-        {/* Tagline Badge */}
-        <div className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-slate-100/80 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800/50 text-indigo-600 dark:text-indigo-400 text-xs font-black mb-8 backdrop-blur-xl tracking-[0.25em] uppercase">
-          <Database className="w-4 h-4 text-teal-600 dark:text-teal-400" />
-          <span>Innovating Student Data Science</span>
-        </div>
-        
         {/* Main Heading */}
-        <h1 className="font-black tracking-tighter mb-10 text-slate-900 dark:text-white
-          text-[2.75rem] sm:text-[3.5rem] md:text-[4.5rem] lg:text-[5.5rem] leading-[1.05]">
-          Empowering the <br />
-          <span className="block mt-2 text-indigo-600 dark:text-indigo-500
-            text-[3.25rem] sm:text-[4rem] md:text-[5.25rem] lg:text-[6.5rem]
-            drop-shadow-[0_0_40px_rgba(79,70,229,0.3)]">
-            Data Hub
+        <h1 className="text-6xl md:text-8xl lg:text-[10rem] font-black tracking-tighter mb-8 leading-[0.8] text-slate-900 dark:text-white">
+          THE <br />
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 drop-shadow-[0_0_50px_rgba(37,99,235,0.2)]">
+            AI GENERATION
           </span>
         </h1>
-
         
         {/* Description Text */}
-        <div className="max-w-4xl mx-auto space-y-12 mb-16">
-          <p className="text-xl md:text-3xl text-slate-600 dark:text-slate-300 font-medium leading-relaxed px-4 transition-colors">
-            Bridging academia and industry through <span className="text-slate-900 dark:text-white font-bold underline decoration-indigo-500/30 decoration-8 underline-offset-8">technical excellence</span> and high-impact peer collaboration.
-          </p>
-          
-          {/* Feature List */}
-          <div className="flex flex-wrap justify-center gap-12">
-            <div className="flex flex-col items-center gap-3 group cursor-default">
-              <div className="p-4 rounded-3xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 ring-1 ring-indigo-100 dark:ring-indigo-500/20 group-hover:scale-110 group-hover:shadow-xl transition-all">
-                <Users className="w-7 h-7" />
-              </div>
-              <span className="text-[10px] font-black tracking-widest text-slate-500 uppercase">500+ Peers</span>
-            </div>
-            <div className="flex flex-col items-center gap-3 group cursor-default">
-              <div className="p-4 rounded-3xl bg-teal-50 dark:bg-teal-500/10 text-teal-600 dark:text-teal-400 ring-1 ring-teal-100 dark:ring-teal-500/20 group-hover:scale-110 group-hover:shadow-xl transition-all">
-                <Sparkles className="w-7 h-7" />
-              </div>
-              <span className="text-[10px] font-black tracking-widest text-slate-500 uppercase">Hands-on Lab</span>
-            </div>
-            <div className="flex flex-col items-center gap-3 group cursor-default">
-              <div className="p-4 rounded-3xl bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 ring-1 ring-blue-100 dark:ring-blue-500/20 group-hover:scale-110 group-hover:shadow-xl transition-all">
-                <GraduationCap className="w-7 h-7" />
-              </div>
-              <span className="text-[10px] font-black tracking-widest text-slate-500 uppercase">Career Path</span>
-            </div>
-          </div>
-        </div>
+        <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto font-medium leading-relaxed mb-12 px-4">
+          Datum is a student-powered lab where data science theory meets <span className="text-indigo-600 dark:text-indigo-400 font-bold underline decoration-indigo-500/30 underline-offset-4">real-world impact</span>. Join 500+ peers in building the future.
+        </p>
 
-        {/* CTAs */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-8 pb-20">
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-20">
+          <button className="group relative px-10 py-5 bg-indigo-600 hover:bg-indigo-500 text-white font-black text-lg rounded-2xl transition-all shadow-2xl shadow-indigo-600/40 active:scale-95 overflow-hidden w-full sm:w-auto">
+            <div className="relative z-10 flex items-center justify-center gap-2">
+              JOIN DATUM
+              <MousePointer2 className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+          </button>
+          
           <Link 
             to="/events" 
-            className="group relative px-16 py-8 bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xl rounded-[2.5rem] transition-all shadow-2xl shadow-indigo-600/40 active:scale-95 overflow-hidden"
+            className="px-10 py-5 bg-white dark:bg-slate-900/40 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-900 dark:text-white font-black text-lg rounded-2xl border border-slate-200 dark:border-slate-800 transition-all backdrop-blur-xl active:scale-95 shadow-lg w-full sm:w-auto flex items-center justify-center gap-2 group"
           >
-            <div className="relative z-10 flex items-center gap-3">
-              EXPLORE EVENTS
-              <ArrowRight className="w-7 h-7 group-hover:translate-x-2 transition-transform duration-300" />
+            EXPLORE PROJECTS
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
+          </Link>
+        </div>
+
+        {/* Stats Row */}
+        <div className="flex flex-wrap justify-center gap-10 md:gap-20 border-t border-slate-100 dark:border-slate-800/50 pt-12">
+          {[
+            { label: 'ACTIVE MEMBERS', val: '500+', icon: Users },
+            { label: 'PROJECTS BUILT', val: '120+', icon: Terminal },
+            { label: 'WORKSHOPS', val: '45+', icon: Database }
+          ].map((stat, i) => (
+            <div key={i} className="flex flex-col items-center">
+              <stat.icon className="w-5 h-5 text-indigo-500 mb-2 opacity-50" />
+              <span className="text-3xl font-black text-slate-900 dark:text-white mb-1">{stat.val}</span>
+              <span className="text-[10px] font-bold text-slate-400 tracking-widest uppercase">{stat.label}</span>
             </div>
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-          </Link>
-          
-          <Link 
-            to="/about" 
-            className="px-16 py-8 bg-white dark:bg-slate-900/40 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-900 dark:text-white font-black text-xl rounded-[2.5rem] border border-slate-200 dark:border-slate-800 transition-all backdrop-blur-xl active:scale-95 shadow-lg"
-          >
-            OUR STORY
-          </Link>
+          ))}
         </div>
       </div>
     </div>

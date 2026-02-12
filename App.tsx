@@ -11,6 +11,8 @@ import Team from './pages/Team';
 import Gallery from './components/Gallery';
 import Admin from './components/Admin';
 import AddEvent from './components/AddEvent';
+import CareerPlanner from "./pages/CareerPlanner";
+
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -53,6 +55,7 @@ const App: React.FC = () => {
             <Route path="/team" element={<Team />} />
             <Route path="/events" element={<Events />} />
             <Route path="/gallery" element={<Gallery />} />
+            <Route path="/career-planner" element={<CareerPlanner />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/admin/add-event" element={<AddEvent />} />
           </Routes>
